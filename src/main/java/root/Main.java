@@ -1,4 +1,4 @@
-package org.frc2851;
+package root;
 
 import com.github.sh0nk.matplotlib4j.Plot;
 import com.github.sh0nk.matplotlib4j.PythonConfig;
