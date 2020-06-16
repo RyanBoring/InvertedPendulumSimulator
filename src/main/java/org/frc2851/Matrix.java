@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class Matrix
 {
-    public ArrayList<ArrayList<Double>> values;
+    private ArrayList<ArrayList<Double>> mValues;
 
     public Matrix(int columns, int rows)
     {
-        values = new ArrayList<>();
+        mValues = new ArrayList<>();
 
         for (int column = 0; column < columns; ++column)
         {
@@ -17,23 +17,48 @@ public class Matrix
             {
                 columnValues.add(0.0);
             }
-            values.add(columnValues);
+            mValues.add(columnValues);
         }
     }
 
     public Matrix(ArrayList<ArrayList<Double>> values)
     {
-        this.values = values;
+        this.mValues = values;
+    }
+
+    public ArrayList<Double> getColumn(int column)
+    {
+        return mValues.get(column);
+    }
+
+    public ArrayList<Double> getRow(int row)
+    {
+        ArrayList<Double> rowArrayList = new ArrayList<>();
+        for (ArrayList<Double> column : mValues)
+        {
+            rowArrayList.add(column.get(row));
+        }
+        return rowArrayList;
+    }
+
+    public double get(int column, int row)
+    {
+        return mValues.get(column).get(row);
+    }
+
+    public void set(int column, int row, double value)
+    {
+        mValues.get(column).set(row, value);
     }
 
     public int getRows()
     {
-        return values.get(0).size();
+        return mValues.get(0).size();
     }
 
     public int getColumns()
     {
-        return values.size();
+        return mValues.size();
     }
 
     public Matrix add(Matrix matrix)
@@ -49,7 +74,7 @@ public class Matrix
         {
             for (int row = 0; row < getRows(); ++row)
             {
-                returnMatrix.values.get(column).set(row, values.get(column).get(row) + matrix.values.get(column).get(row));
+                returnMatrix.set(column, row, mValues.get(column).get(row) + matrix.mValues.get(column).get(row));
             }
         }
 
@@ -73,13 +98,62 @@ public class Matrix
                 double dotProduct = 0;
                 for (int value = 0; value < getColumns(); ++value)
                 {
-                    dotProduct += values.get(value).get(row) * matrix.values.get(column).get(value);
+                    dotProduct += mValues.get(value).get(row) * matrix.mValues.get(column).get(value);
                 }
 
-                returnMatrix.values.get(column).set(row, dotProduct);
+                returnMatrix.set(column, row, dotProduct);
             }
         }
 
         return returnMatrix;
+    }
+
+    public Matrix multiply(double d)
+    {
+        Matrix returnMatrix = new Matrix(getColumns(), getRows());
+
+        for (int column = 0; column < getColumns(); ++column)
+        {
+            for (int row = 0; row < getRows(); ++row)
+            {
+                returnMatrix.set(column, row, get(column, row) * d);
+            }
+        }
+
+        return returnMatrix;
+    }
+
+    @Override
+    public Matrix clone()
+    {
+        Matrix clone = new Matrix(getColumns(), getRows());
+
+        for (int column = 0; column < getColumns(); ++column)
+        {
+            for (int row = 0; row < getRows(); ++row)
+            {
+                clone.set(column, row, mValues.get(column).get(row));
+            }
+        }
+
+        return clone;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int row = 0; row < getRows(); row++)
+        {
+            for (int column = 0; column < getColumns(); column++)
+            {
+                stringBuilder.append(String.format("%4.2f", get(column, row)));
+            }
+            if (row != getRows() - 1)
+                stringBuilder.append('\n');
+        }
+
+        return stringBuilder.toString();
     }
 }
