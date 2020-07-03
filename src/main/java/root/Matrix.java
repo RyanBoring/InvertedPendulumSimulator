@@ -1,6 +1,9 @@
 package root;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Matrix
 {
@@ -81,6 +84,11 @@ public class Matrix
         return returnMatrix;
     }
 
+    public Matrix subtract(Matrix matrix)
+    {
+        return add(matrix.multiply(-1));
+    }
+
     public Matrix multiply(Matrix matrix)
     {
         if (getColumns() != matrix.getRows())
@@ -123,6 +131,37 @@ public class Matrix
         return returnMatrix;
     }
 
+    public double getDeterminant()
+    {
+        if (getColumns() != getRows())
+        {
+            System.out.println("Cannot compute determinant for non-square matrix");
+            System.exit(-1);
+        }
+
+        if (getColumns() != 2)
+        {
+            System.out.println("uhhh... 2x2 matrices only");
+            System.exit(-1);
+        }
+
+        return get(0, 0) * get(1, 1) - get(1, 0) * get(0, 1);
+    }
+
+    public Matrix invert()
+    {
+        if (getColumns() != 2)
+        {
+            System.out.println("uhhh... 2x2 matrices only");
+            System.exit(-1);
+        }
+
+        return new Matrix(new ArrayList<>(Arrays.asList(
+                new ArrayList<>(Arrays.asList(get(1, 1), -get(0, 1))),
+                new ArrayList<>(Arrays.asList(-get(1, 0), get(0, 0)))
+        ))).multiply(1 / getDeterminant());
+    }
+
     @Override
     public Matrix clone()
     {
@@ -148,7 +187,7 @@ public class Matrix
         {
             for (int column = 0; column < getColumns(); column++)
             {
-                stringBuilder.append(String.format("%4.2f", get(column, row)));
+                stringBuilder.append(StringUtils.leftPad(String.format("%.2f", get(column, row)), 6, ' ')).append("  ");
             }
             if (row != getRows() - 1)
                 stringBuilder.append('\n');
